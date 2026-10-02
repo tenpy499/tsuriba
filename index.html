@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>釣り場 | 地域の釣り人コミュニティ</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f4faf8;--panel:#fff;--line:#d7e8e3;--text:#173631;--muted:#718a85;--accent:#18aa8d;--dark:#087965;--soft:#e3f4ef;--shadow:0 6px 22px #1d645314}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#fff,#edf7f4);color:var(--text);font-family:system-ui,"Noto Sans JP",sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-columns:235px minmax(0,760px) 270px;justify-content:center}.side{position:sticky;top:0;height:100vh;background:#fff;border-right:1px solid var(--line);padding:25px 15px}.logo{font-size:29px;font-weight:900;letter-spacing:.08em}.tagline{font-size:12px;color:var(--muted)}.user{display:flex;gap:9px;align-items:center;background:#f0f8f5;border:1px solid var(--line);border-radius:14px;padding:12px;margin:24px 0 14px}.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#ccefe7;color:#147562;font-weight:900;flex:none}.nav{display:grid;gap:5px}.nav button,.sidefoot button{border:0;background:transparent;color:#607874;text-align:left;padding:11px 12px;border-radius:11px}.nav button.active,.nav button:hover,.sidefoot button:hover{background:var(--soft);color:var(--dark)}.sidefoot{position:absolute;left:15px;right:15px;bottom:18px;display:grid}
+.main{padding:25px 19px 60px;min-width:0}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.top h1{margin:0;font-size:25px}.sub,.meta,.hint{font-size:11px;color:var(--muted);margin-top:4px}.icons{display:flex;gap:7px}.icon{width:40px;height:40px;border:1px solid var(--line);background:#fff;border-radius:11px;position:relative}.badge{position:absolute;right:-3px;top:-4px;background:#dd6666;color:#fff;border-radius:20px;font-size:9px;padding:2px 5px}.bar{display:flex;gap:7px;overflow:auto;margin-bottom:12px}.pill{white-space:nowrap;border:1px solid var(--line);background:#fff;color:#718985;border-radius:99px;padding:8px 12px}.pill.active{background:#d9f1eb;border-color:#9bd3c7;color:var(--dark)}
+.box,.post,.card{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow)}.box{padding:15px;margin-bottom:13px}.compose{display:flex;gap:10px}.compose textarea{flex:1;min-height:68px;resize:vertical;background:#f8fcfb;border:1px solid var(--line);border-radius:12px;padding:11px;color:var(--text)}.composefoot{display:flex;justify-content:space-between;align-items:center;margin-top:9px}.primary{border:0;background:var(--accent);color:#fff;font-weight:800;border-radius:10px;padding:9px 15px}.secondary{border:1px solid var(--line);background:#f4faf8;color:#496762;border-radius:10px;padding:8px 12px}
+.feed{display:grid;gap:11px}.post{padding:15px}.head{display:flex;gap:10px;align-items:center}.more{margin-left:auto;border:0;background:transparent;color:#829894}.name{font-weight:850;font-size:14px}.text{font-size:14px;line-height:1.7;white-space:pre-wrap;margin:12px 0}.tags{display:flex;gap:5px;flex-wrap:wrap}.tag{font-size:10px;background:#e6f5f1;color:#267665;padding:4px 8px;border-radius:99px}.actions{display:flex;gap:4px;border-top:1px solid #e4efed;margin-top:12px;padding-top:8px}.action{border:0;background:transparent;color:#78908d;padding:6px 8px;border-radius:8px}.action:hover,.action.on{background:#eaf7f4;color:var(--dark)}.reply{display:none;border-top:1px solid #e4efed;margin-top:8px;padding-top:8px}.replyrow{display:flex;gap:7px;margin:7px 0}.replybody{background:#f1f7f5;border-radius:10px;padding:7px;font-size:12px}.replyinput{display:flex;gap:6px}.replyinput input{flex:1;border:1px solid var(--line);border-radius:9px;padding:8px}.replyinput button{border:0;background:var(--accent);color:#fff;border-radius:9px;padding:0 12px}
+.right{padding:25px 15px 25px 0}.card{padding:14px;margin-bottom:11px}.cardtitle{font-size:14px;font-weight:850;margin-bottom:10px}.search{display:flex;gap:6px}.search input{width:100%;border:1px solid var(--line);background:#f8fcfb;border-radius:9px;padding:9px}.topic{padding:9px 0;border-bottom:1px solid #e5efed}.topic span{display:block;font-size:10px;color:var(--muted);margin-top:2px}.empty{text-align:center;padding:45px;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
+.cover{height:110px;background:linear-gradient(135deg,#cdeee6,#b9ddd7);border-radius:15px 15px 0 0}.profilebody{padding:0 18px 18px;margin-top:-23px}.big{width:66px;height:66px;border:4px solid #fff;font-size:20px}.pname{font-size:21px;font-weight:900;margin-top:8px}.stats{display:flex;gap:25px;margin-top:13px}.stats span{display:block;font-size:10px;color:var(--muted)}
+.overlay{display:none;position:fixed;inset:0;background:#23433f55;backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:18px;z-index:50}.modal{width:min(540px,100%);max-height:90vh;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}.close{float:right;border:0;background:transparent;font-size:22px;color:#78908d}.modal h2{font-size:18px;margin:0 0 14px}.form{display:grid;gap:10px}.form label{font-size:11px;color:var(--muted)}.form input,.form textarea,.form select{width:100%;border:1px solid var(--line);background:#f8fcfb;border-radius:10px;padding:10px;color:var(--text)}.modalactions{display:flex;justify-content:flex-end;gap:7px;margin-top:15px}.notice{background:#eaf6f2;border-radius:12px;padding:12px;font-size:12px;line-height:1.6;color:#46645f}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.feature{padding:11px;background:#f4f9f7;border:1px solid var(--line);border-radius:11px}.feature b{font-size:12px}.feature span{display:block;color:var(--muted);font-size:10px;margin-top:3px}.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;background:#173e38;color:#fff;padding:10px 15px;border-radius:10px;font-size:12px;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1030px){.app{grid-template-columns:215px minmax(0,760px)}.right{display:none}}@media(max-width:700px){.app{display:block}.side{height:auto;position:static;border-right:0;border-bottom:1px solid var(--line);padding:13px}.user,.sidefoot{display:none}.nav{display:flex;overflow:auto;margin-top:12px}.nav button{white-space:nowrap}.main{padding:18px 12px 55px}.top h1{font-size:21px}.grid{grid-template-columns:1fr}}
+</style></head>
+<body>
+<div class="app"><aside class="side"><div class="logo">釣り場</div><div class="tagline">同じ地域の釣り人と話す場所</div>
+<div class="user"><div class="avatar">自</div><div><b>あなた</b><div class="meta" id="userMeta">岡山県・釣り人</div></div></div>
+<nav class="nav"><button class="active" data-p="home">🏠 ホーム</button><button data-p="discover">🔎 探す</button><button data-p="saved">🔖 保存</button><button data-p="profile">👤 プロフィール</button><button data-p="messages">✉ メッセージ</button></nav>
+<div class="sidefoot"><button onclick="openModal('settings')">⚙ 設定</button><button onclick="openModal('account')">🔐 アカウント</button><button onclick="openModal('about')">ⓘ 釣り場について</button></div></aside>
+<main class="main"><div class="top"><div><h1 id="title">岡山県の釣り人</h1><div class="sub" id="sub">釣果だけじゃなく、普通に釣りの話をしよう。</div></div><div class="icons"><button class="icon" onclick="openModal('notifications')">🔔<span class="badge">3</span></button><button class="icon" onclick="openModal('settings')">⚙</button></div></div>
+<div class="bar" id="prefs"></div><section class="box" id="composer"><div class="compose"><div class="avatar">自</div><textarea id="newPost" placeholder="質問、雑談、タックル、一緒に釣る募集など"></textarea></div><div class="composefoot"><span class="hint">正確な釣り場や自宅の位置は公開しなくてOK。</span><button class="primary" onclick="createPost()">投稿する</button></div></section><div id="content"></div></main>
+<aside class="right"><div class="card"><div class="cardtitle">釣り場を探す</div><div class="search"><input id="search" placeholder="魚種・タックル・投稿"><button class="secondary" onclick="search()">検索</button></div></div><div class="card"><div class="cardtitle">この地域で話題</div><div class="topic"><b>#シーバス</b><span>最近の投稿 24件</span></div><div class="topic"><b>#タックル相談</b><span>最近の投稿 17件</span></div><div class="topic"><b>#一緒に釣る</b><span>最近の投稿 11件</span></div></div><div class="card"><div class="cardtitle">安全に使うために</div><div class="notice">正確な釣り場、自宅、電話番号などの公開は避けましょう。</div></div></aside></div>
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div>
+<script>
+const SUPABASE_URL = "https://auiipgcclkgcogcdleus.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Igb4sNvqWPMO2rGrUKS4Dg_Qub6Wrn1";
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+const prefs=["岡山県","香川県","兵庫県","広島県","愛媛県","大阪府"],regions=["すべて","岡山市周辺","倉敷周辺","玉野周辺","県南その他","地域を言わない"];
+let pref=localStorage.getItem("tsuri_pref")||"岡山県",region="すべて",page="home",query="",currentUser=null,currentProfile=null,posts=[];
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+const ago=d=>{const n=Math.max(0,Date.now()-new Date(d).getTime()),m=Math.floor(n/60000);if(m<1)return"たった今";if(m<60)return`${m}分前`;const h=Math.floor(m/60);if(h<24)return`${h}時間前`;const day=Math.floor(h/24);return`${day}日前`};
+function avatar(name){return esc((name||"釣").trim().slice(0,1));}
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1900)}
+function closeModal(){document.getElementById("overlay").style.display="none"}
+function openHtml(html){document.getElementById("modal").innerHTML=html;document.getElementById("overlay").style.display="flex"}
+async function boot(){
+  const {data:{session}}=await client.auth.getSession();
+  currentUser=session?.user||null;
+  if(currentUser) await loadProfile();
+  updateAccountUI();
+  await loadPosts();
+  initNav(); initPrefButtons(); render();
+  client.auth.onAuthStateChange(async (_event,session)=>{currentUser=session?.user||null;if(currentUser){await loadProfile();toast("ログインしました")}else{currentProfile=null}updateAccountUI();await loadPosts();render();});
+}
+async function loadProfile(){
+  if(!currentUser)return;
+  const {data,error}=await client.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
+  if(error){console.error(error);return}
+  if(data){currentProfile=data; if(data.prefecture)pref=data.prefecture; localStorage.setItem("tsuri_pref",pref)}
+  else {const name=currentUser.user_metadata?.display_name||"釣り人";const {data:created}=await client.from("profiles").insert({id:currentUser.id,display_name:name,prefecture:pref}).select().single();currentProfile=created||{id:currentUser.id,display_name:name,prefecture:pref}}
+}
+async function loadPosts(){
+  if(!currentUser){posts=[];return}
+  let q=client.from("posts").select("id,user_id,prefecture,region,category,body,image_url,created_at,profiles(display_name,avatar_url)").eq("prefecture",pref).is("deleted_at",null).order("created_at",{ascending:false}).limit(100);
+  if(region!=="すべて")q=q.eq("region",region);
+  if(query)q=q.ilike("body",`%${query}%`);
+  const {data,error}=await q;
+  if(error){console.error(error);toast("投稿の読み込みに失敗しました: "+error.message);posts=[];return}
+  const ids=(data||[]).map(p=>p.id);
+  let likes=[],bookmarks=[],comments=[];
+  if(ids.length){
+    const [l,b,c]=await Promise.all([
+      client.from("likes").select("post_id,user_id").in("post_id",ids),
+      client.from("bookmarks").select("post_id,user_id").in("post_id",ids),
+      client.from("comments").select("id,post_id,user_id,body,created_at,profiles(display_name)").in("post_id",ids).is("deleted_at",null).order("created_at",{ascending:true})
+    ]); likes=l.data||[];bookmarks=b.data||[];comments=c.data||[];
+  }
+  const lc=new Map(),bc=new Set(),cm=new Map();
+  likes.forEach(x=>lc.set(x.post_id,(lc.get(x.post_id)||0)+1));bookmarks.filter(x=>x.user_id===currentUser.id).forEach(x=>bc.add(x.post_id));
+  comments.forEach(x=>{if(!cm.has(x.post_id))cm.set(x.post_id,[]);cm.get(x.post_id).push(x)});
+  posts=(data||[]).map(p=>({...p,likes:lc.get(p.id)||0,liked:likes.some(x=>x.post_id===p.id&&x.user_id===currentUser.id),saved:bc.has(p.id),comments:cm.get(p.id)||[]}));
+}
+function updateAccountUI(){
+  const name=currentProfile?.display_name||"ゲスト";
+  document.querySelector(".user b").textContent=name;
+  document.querySelector(".user .avatar").textContent=avatar(name);
+  document.getElementById("userMeta").textContent=currentUser?(pref+"・釣り人"):"ログインして利用";
+}
+function initPrefButtons(){document.getElementById("prefs").innerHTML=prefs.map(p=>`<button class="pill ${p===pref?"active":""}" onclick="setPref('${p}')">${p}</button>`).join("")}
+function initNav(){document.querySelectorAll(".nav button").forEach(b=>b.onclick=async()=>{if(!currentUser)return openModal("account");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");page=b.dataset.p;if(page!=="home"&&page!=="discover"&&page!=="saved")query="";await loadPosts();render()})}
+async function setPref(p){pref=p;region="すべて";localStorage.setItem("tsuri_pref",p);if(currentUser){await client.from("profiles").update({prefecture:p}).eq("id",currentUser.id);await loadPosts()}initPrefButtons();render()}
+async function setRegion(r){region=r;await loadPosts();render()}
+function render(){
+  document.getElementById("userMeta").textContent=currentUser?(pref+"・釣り人"):"ログインして利用";
+  document.getElementById("title").textContent=page==="profile"?"プロフィール":page==="messages"?"メッセージ":page==="saved"?"保存した投稿":pref+"の釣り人";
+  document.getElementById("sub").textContent=page==="home"?"釣果だけじゃなく、普通に釣りの話をしよう。":page==="discover"?"魚種・タックル・質問などから探せます。":page==="saved"?"あとで読みたい投稿をまとめています。":"あなたの釣りプロフィール。";
+  document.getElementById("composer").style.display=currentUser&&["home","discover"].includes(page)?"block":"none";
+  if(!currentUser){document.getElementById("content").innerHTML=`<div class="card"><div class="cardtitle">釣り場へようこそ</div><div class="notice">同じ地域の釣り人と話せるコミュニティです。投稿を見るにはログインが必要です。</div><div class="modalactions"><button class="primary" onclick="openModal('account')">ログイン / 新規登録</button></div></div>`;return}
+  if(page==="profile"){document.getElementById("content").innerHTML=profile();return}
+  if(page==="messages"){document.getElementById("content").innerHTML=messages();return}
+  let a=page==="saved"?posts.filter(p=>p.saved):posts;
+  document.getElementById("content").innerHTML=`<div class="bar">${regions.map(r=>`<button class="pill ${r===region?"active":""}" onclick="setRegion('${r}')">${r}</button>`).join("")}</div>${a.length?`<div class="feed">${a.map(card).join("")}</div>`:`<div class="empty">この条件の投稿はまだありません。</div>`}`;
+}
+function card(p){const name=p.profiles?.display_name||"釣り人";return `<article class="post"><div class="head"><div class="avatar">${avatar(name)}</div><div><div class="name">${esc(name)}</div><div class="meta">${esc(p.prefecture)}・${esc(p.region||"地域を言わない")}・${ago(p.created_at)}</div></div><button class="more" onclick="report(${p.id})">•••</button></div><div class="text">${esc(p.body)}</div><div class="tags"><span class="tag">#${esc(p.category)}</span>${p.region?`<span class="tag">${esc(p.region)}</span>`:""}</div><div class="actions"><button class="action ${p.liked?"on":""}" onclick="like(${p.id})">${p.liked?"♥":"♡"} ${p.likes}</button><button class="action" onclick="toggleReply(${p.id})">💬 ${p.comments.length}</button><button class="action ${p.saved?"on":""}" onclick="bookmark(${p.id})">🔖 ${p.saved?"保存済み":"保存"}</button></div><div class="reply" id="reply${p.id}">${p.comments.map(r=>`<div class="replyrow"><div class="avatar">${avatar(r.profiles?.display_name)}</div><div class="replybody"><b>${esc(r.profiles?.display_name||"釣り人")}</b><br>${esc(r.body)}</div></div>`).join("")}<div class="replyinput"><input id="input${p.id}" placeholder="返信を書く"><button onclick="reply(${p.id})">送信</button></div></div></article>`}
+async function createPost(){
+  if(!currentUser)return openModal("account");const text=document.getElementById("newPost").value.trim();if(!text)return toast("投稿内容を入力してください");
+  const {error}=await client.from("posts").insert({user_id:currentUser.id,prefecture:pref,region:region==="すべて"?"地域を言わない":region,category:"みんなの話",body:text});
+  if(error)return toast("投稿できませんでした: "+error.message);document.getElementById("newPost").value="";await loadPosts();render();toast("投稿しました")
+}
+async function like(id){const p=posts.find(x=>x.id===id);if(!p)return;if(p.liked){const {error}=await client.from("likes").delete().eq("post_id",id).eq("user_id",currentUser.id);if(error)return toast(error.message)}else{const {error}=await client.from("likes").insert({post_id:id,user_id:currentUser.id});if(error)return toast(error.message)}await loadPosts();render()}
+async function bookmark(id){const p=posts.find(x=>x.id===id);if(!p)return;if(p.saved){const {error}=await client.from("bookmarks").delete().eq("post_id",id).eq("user_id",currentUser.id);if(error)return toast(error.message)}else{const {error}=await client.from("bookmarks").insert({post_id:id,user_id:currentUser.id});if(error)return toast(error.message)}await loadPosts();render();toast(p.saved?"保存から外しました":"保存しました")}
+function toggleReply(id){const e=document.getElementById("reply"+id);e.style.display=e.style.display==="block"?"none":"block"}
+async function reply(id){const e=document.getElementById("input"+id),t=e.value.trim();if(!t)return;const {error}=await client.from("comments").insert({post_id:id,user_id:currentUser.id,body:t});if(error)return toast(error.message);e.value="";await loadPosts();render();toast("返信しました")}
+async function search(){query=document.getElementById("search").value.trim();page="discover";await loadPosts();render()}
+function profile(){const mine=posts.filter(p=>p.user_id===currentUser.id);return `<div class="card" style="overflow:hidden;padding:0"><div class="cover"></div><div class="profilebody"><div class="avatar big">${avatar(currentProfile?.display_name)}</div><div class="pname">${esc(currentProfile?.display_name||"釣り人")}</div><div class="meta">${esc(currentProfile?.bio||"釣りの話をしよう。")}</div><div class="stats"><div><b>${mine.length}</b><span>この表示中の投稿</span></div><div><b>${currentProfile?.prefecture||pref}</b><span>地域</span></div></div><button class="secondary" style="margin-top:14px" onclick="openModal('profile')">プロフィールを編集</button></div></div>`}
+function messages(){return `<div class="card"><div class="cardtitle">メッセージ</div><div class="notice">DM機能は安全設計を入れてから追加します。現在は投稿・返信・保存・いいねまで実データで動きます。</div></div>`}
+function report(id){openModal("report",id)}
+function openModal(type,id){let b="";
+ if(type==="account")b=`<button class="close" onclick="closeModal()">×</button><h2>釣り場にログイン</h2><div class="notice">メールアドレスで登録・ログインできます。</div><div class="form" style="margin-top:12px"><label>表示名（新規登録時）</label><input id="authName" placeholder="釣り人"><label>メールアドレス</label><input id="authEmail" type="email" placeholder="you@example.com"><label>パスワード</label><input id="authPassword" type="password" placeholder="8文字以上"><div class="modalactions"><button class="secondary" onclick="signUp()">新規登録</button><button class="primary" onclick="signIn()">ログイン</button></div></div>`;
+ if(type==="profile")b=`<button class="close" onclick="closeModal()">×</button><h2>プロフィール編集</h2><div class="form"><label>表示名</label><input id="profileName" value="${esc(currentProfile?.display_name||"")}"><label>自己紹介</label><textarea id="profileBio">${esc(currentProfile?.bio||"")}</textarea><label>表示する県</label><select id="profilePref">${prefs.map(p=>`<option ${p===pref?"selected":""}>${p}</option>`).join("")}</select></div><div class="modalactions"><button class="primary" onclick="saveProfile()">保存</button></div>`;
+ if(type==="settings")b=`<button class="close" onclick="closeModal()">×</button><h2>設定</h2><div class="notice">現在はログイン・投稿・いいね・保存・返信を実データ接続しています。DM、通知、画像、管理画面は次の開発段階です。</div><div class="modalactions"><button class="secondary" onclick="openModal('privacy')">安全・プライバシー</button>${currentUser?`<button class="primary" onclick="signOut()">ログアウト</button>`:""}</div>`;
+ if(type==="privacy")b=`<button class="close" onclick="closeModal()">×</button><h2>安全・プライバシー</h2><div class="notice">正確な釣り場、自宅、学校、電話番号などは公開しないでください。知らない人との直接の待ち合わせや個人情報の交換にも注意してください。通報・ブロック機能と管理者対応は公開前に追加します。</div>`;
+ if(type==="report")b=`<button class="close" onclick="closeModal()">×</button><h2>投稿を通報</h2><div class="form"><label>理由</label><select id="reportReason"><option>迷惑行為</option><option>個人情報</option><option>危険な内容</option><option>その他</option></select></div><div class="modalactions"><button class="primary" onclick="sendReport(${id})">通報する</button></div>`;
+ if(type==="notifications")b=`<button class="close" onclick="closeModal()">×</button><h2>通知</h2><div class="notice">通知機能は次の開発段階で実装します。</div>`;
+ if(type==="about")b=`<button class="close" onclick="closeModal()">×</button><h2>釣り場について</h2><div class="notice">同じ地域の釣り人が気軽に話せる場所。釣果だけでなく、質問・雑談・タックル・釣行相談を中心にします。</div><div class="grid"><div class="feature"><b>☁ 実データ</b><span>Supabase接続済み</span></div><div class="feature"><b>🔐 認証</b><span>メール登録・ログイン</span></div><div class="feature"><b>💬 返信</b><span>DB保存</span></div><div class="feature"><b>♥ いいね</b><span>DB保存</span></div><div class="feature"><b>🔖 保存</b><span>DB保存</span></div><div class="feature"><b>🛡 安全</b><span>RLSを利用</span></div></div>`;
+ openHtml(b)
+}
+async function signUp(){const name=document.getElementById("authName").value.trim()||"釣り人",email=document.getElementById("authEmail").value.trim(),password=document.getElementById("authPassword").value;if(!email||password.length<8)return toast("メールアドレスと8文字以上のパスワードを入力してください");const {data,error}=await client.auth.signUp({email,password,options:{data:{display_name:name}}});if(error)return toast(error.message);if(!data.session)toast("確認メールを確認してください");else{closeModal();toast("アカウントを作成しました")}}
+async function signIn(){const email=document.getElementById("authEmail").value.trim(),password=document.getElementById("authPassword").value;if(!email||!password)return toast("メールアドレスとパスワードを入力してください");const {error}=await client.auth.signInWithPassword({email,password});if(error)return toast(error.message);closeModal()}
+async function signOut(){await client.auth.signOut();closeModal();toast("ログアウトしました")}
+async function saveProfile(){const name=document.getElementById("profileName").value.trim()||"釣り人",bio=document.getElementById("profileBio").value.trim(),p=document.getElementById("profilePref").value;const {data,error}=await client.from("profiles").update({display_name:name,bio,prefecture:p}).eq("id",currentUser.id).select().single();if(error)return toast(error.message);currentProfile=data;pref=p;localStorage.setItem("tsuri_pref",p);closeModal();initPrefButtons();await loadPosts();updateAccountUI();render();toast("プロフィールを保存しました")}
+async function sendReport(postId){const reason=document.getElementById("reportReason").value;const p=posts.find(x=>x.id===postId);const {error}=await client.from("reports").insert({reporter_id:currentUser.id,post_id:postId,reported_user_id:p?.user_id||null,reason});if(error)return toast(error.message);closeModal();toast("通報を受け付けました")}
+function init(){initPrefButtons();initNav();boot()}
+init();
+</script></body></html>
